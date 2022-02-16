@@ -1,0 +1,26 @@
+
+qk1 := 0.250076;
+ld = 1.0;
+lq = 1.0;
+ldipole = 3.0;
+
+D:  DRIFT,      L=0.5*ld;                 
+QF: QUADRUPOLE, L=0.5*lq,   K1:=qk1;
+QD: QUADRUPOLE, L=0.5*lq,   K1:=-qk1;
+B:  RBEND,      L=ldipole,  ANGLE=0.001;
+
+! Markers for PTC observation points
+! PTC automatically observers at start and end of the beamline
+Obs1: MARKER;
+Obs2: MARKER;
+Obs3: MARKER;
+Obs4: MARKER;
+Obs5: MARKER;
+
+FODO: LINE=(QF,D,Obs1,D,B,D,Obs2,D,QD,Obs3,QD,D,Obs4,D,B,D,Obs5,D,QF);
+
+beam,particle=proton,energy=120.0; 
+use,period=FODO;
+
+! Run TWISS module in "ring" mode, i.e. find matched solution for initial CS params
+twiss, save, file="twiss.out";
